@@ -1,0 +1,76 @@
+cmake_minimum_required(VERSION 3.20)
+
+project(TileTwister
+    VERSION 1.0
+    LANGUAGES CXX
+)
+
+# -----------------------------
+# Configuration générale
+# -----------------------------
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# -----------------------------
+# Dépendances
+# -----------------------------
+find_package(SDL2 REQUIRED)
+
+# -----------------------------
+# Exécutable principal
+# -----------------------------
+add_executable(TileTwister
+    src/main.cpp
+
+    src/core/Grid.cpp
+    src/core/Tile.cpp
+    src/core/Game.cpp
+
+    src/sdl/Window.cpp
+    src/sdl/Renderer.cpp
+    src/sdl/TileView.cpp
+
+    src/input/InputHandler.cpp
+)
+
+# -----------------------------
+# Includes
+# -----------------------------
+target_include_directories(TileTwister
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+)
+
+# -----------------------------
+# Link SDL
+# -----------------------------
+target_link_libraries(TileTwister
+    PRIVATE
+        SDL2::SDL2
+)
+
+# -----------------------------
+# Compilation warnings (bonus qualité)
+# -----------------------------
+if (MINGW)
+    target_compile_options(TileTwister PRIVATE -Wall -Wextra)
+endif()
+
+# -----------------------------
+# Tests (optionnel)
+# -----------------------------
+enable_testing()
+
+add_executable(test_grid
+    tests/test_grid.cpp
+    src/core/Grid.cpp
+    src/core/Tile.cpp
+)
+
+target_include_directories(test_grid
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/include
+)
+
+add_test(NAME GridTests COMMAND test_grid)
